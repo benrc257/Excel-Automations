@@ -26,9 +26,13 @@ int main() {
 
     //ask the user for the path of the CSV input file until the file opens
     do {
-        cout << "\nPlease enter or paste the path of the .CSV file with the attendee info.\nThe path to the file can be found by right-clicking the file and selecting \"Copy as Path\".\n\t>> ";
+        cout << "\nPlease enter or paste the path of the .CSV file with the attendee info.\nThe path to the file can be found by shift + right-clicking the file and selecting \"Copy as Path\".\n\t>> ";
         getline(cin, filename);
-        if (!(filename.size() >= 4 && filename.substr(filename.size() - 5) == ".csv")) {
+        if (filename[0] == '\"' && filename.size() > 2) {
+            filename = filename.substr(1);
+            filename.pop_back();
+        }
+        if (filename.size() > 4 && filename.substr(filename.size() - 5) == ".csv") {
             file.open(filename, ios::in);
             if (!file.is_open()) {
                 cout << "\nFile could not be opened. Please try again.\n";
