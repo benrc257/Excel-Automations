@@ -31,8 +31,9 @@ int main() {
         if (filename[0] == '\"' && filename.size() > 2) {
             filename = filename.substr(1);
             filename.pop_back();
+            cout << filename << endl;
         }
-        if (filename.size() > 4 && filename.substr(filename.size() - 5) == ".csv") {
+        if (filename.size() > 4 && filename.substr(filename.size() - 4) == ".csv") {
             file.open(filename, ios::in);
             if (!file.is_open()) {
                 cout << "\nFile could not be opened. Please try again.\n";
