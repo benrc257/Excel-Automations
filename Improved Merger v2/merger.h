@@ -29,7 +29,7 @@ struct Files {
 
 //function prototypes
 void delay(int);
-void findCells(int&, int&, int&, fstream);
+void findCells(int&, int&, fstream&);
 void getCells(int, vector<Files>);
 void outputCSV(int, vector<Files>);
 

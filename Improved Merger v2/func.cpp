@@ -27,10 +27,10 @@ void delay(int delay) {
     Inputs: int&, int&, fstream
     Purpose: Count the number of rows and columns in the given file.
 */
-void findCells(int& rows, int& columns, fstream file) {
+void findCells(int& rows, int& columns, fstream& file) {
     //variables
     string line;
-    size_t output;
+    size_t output = 0;
 
     //set rows and columns to 0
     rows = 0;
@@ -39,11 +39,12 @@ void findCells(int& rows, int& columns, fstream file) {
     //for each line, increase rows
     while (getline(file, line)) {
         rows++;
-        output = 0;
-        do {    //check for the number of columns with .find(","), starting at the index of the last found comma +1
-            columns++;
-            output = line.find(",", output+1);
-        } while(output != string::npos);
+        if (rows == 1) {
+            do {    //check for the number of columns with .find(",") starting at the index of the last found comma +1
+                columns++;
+                output = line.find(",", output+1);
+            } while(output != string::npos);
+        }
     }
 
     //return to the start of the file
@@ -58,30 +59,20 @@ void findCells(int& rows, int& columns, fstream file) {
     Inputs: int, Files
     Purpose: Retrieve the value of each cell in the file and enter it into the structure array.
 */
-void getCells(int total, Files File) {
+void getCells(int total, vector<Files> File) {
     //variables
     string line;
-    char * output;
-    size_t start, end;
+    size_t quote1, quote2;
 
     //for each file, find the rows and columns using findCells, then retrieve the data from each cell
     for (int i = 0; i < total; i++) { //repeats for each file
-        findCells(File[i].rows, File[i].columns, (*(File[i].file)));
-        File[i].cell = new string*[File[i].rows]; //create an array of string pointers for the rows
+        findCells(File[i].rows, File[i].columns, File[i].file);
         for (int j = 0; j < File[i].rows; j++) {
-            File[i].cell[j] = new string[File[i].columns]; //create an array of strings for the columns
-        }
-        for (int j = 0; j < File[i].rows; j++) { //repeats for each row
-            start = 0;
-            getline((*(File[i].file)), line);
-            for (int k = 0; k < File[i].columns; k++) { //enters the data into each column
-                end = line.find(',', start);
-                if (end != string::npos) {
-                    File[i].cell[j][k] = line.substr(start, (end - start));
-                } else {
-                    File[i].cell[j][k] = line.substr(start);
-                }
-                start = end+1;
+            getline(File[i].file, line);
+            for (int k = 0; k < File[i].columns; k++) {
+                
+
+                File[i].cell[j][k]
             }
         }
     }
@@ -91,8 +82,8 @@ void getCells(int total, Files File) {
 
 /*
     Name: outputCSV()
-    Inputs: int&, int&, int&, string, Cells**
-    Purpose: Retrieve the value of each cell in the file and enter it into the structure array.
+    Inputs: int, Files
+    Purpose: Retrieve the value of each cell and print it to the output file, accounting for duplicates.
 */
 void outputCSV(int total, Files File) {
     //variables
