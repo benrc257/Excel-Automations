@@ -24,13 +24,13 @@ struct Files {
 	fstream file;
 	vector<vector<string>> cell;
 
-	Files() : rows(0), columns(0), file() {}
+	Files() : rows(0), columns(0), file(), cell() {}
 };
 
 //function prototypes
 void delay(int);
 void findCells(int&, int&, fstream&);
-void getCells(int, vector<Files>);
-void outputCSV(int, vector<Files>);
+void getCells(int, vector<Files>&);
+void outputCSV(int, vector<Files>&);
 
 #endif

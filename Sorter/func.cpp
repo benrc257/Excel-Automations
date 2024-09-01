@@ -68,36 +68,33 @@ int getCells(int& cells, int& rows, int& columns, fstream& file, Cells** Cell) {
         start = 0;
         end = 0;
         getline(file, line);
-        for (int j = 0; j < columns; j++) {
-            quote2 = 0; //do some work to detect quotes, detect commas inside, and replace them with a pipe
-            do {
-                quote1 = line.find("\"", quote2);
-                if (quote1 != string::npos) {
-                    quote2 = line.find("\"", quote1+1);
-                    if (quote2 != string::npos && (quote1+1) != quote2) {
-                        cout << endl << "QUOTES FOUND" << endl; //remove
-                        inquotes = line.substr(quote1, (quote2-quote1)+1);
-                        cout << inquotes << endl; //remove
-                        comma = inquotes.find(",");
-                        if (comma != string::npos) {
-                            quoteLine1 = inquotes.substr(0, comma);
-                            quoteLine2 = inquotes.substr(comma+1);
-                            inquotes = quoteLine1 + " |" + quoteLine2;
-                            cout << inquotes << endl; //remove
-                            quoteLine1 = line.substr(0, quote1);
-                            quoteLine2 = line.substr(quote2+1);
-                            line = quoteLine1 + inquotes + quoteLine2;
-                            cout << line << endl; //remove
-                        }
-                        quote2 = quote2+1;
-                    } else if ((quote1+1) == quote2) {
-                        quote2 = quote1+2;
-                    } else if (quote2 == string::npos) {
-                        break;
-                    }
-                }
-            } while (quote1 != string::npos);
 
+        quote2 = 0; //do some work to detect quotes, detect commas inside, and replace them with a pipe
+        do {
+            quote1 = line.find("\"", quote2);
+            if (quote1 != string::npos) {
+                quote2 = line.find("\"", quote1+1);
+                if (quote2 != string::npos && (quote1+1) != quote2) {
+                    inquotes = line.substr(quote1, (quote2-quote1)+1);
+                    comma = inquotes.find(",");
+                    if (comma != string::npos) {
+                        quoteLine1 = inquotes.substr(0, comma);
+                        quoteLine2 = inquotes.substr(comma+1);
+                        inquotes = quoteLine1 + " |" + quoteLine2;
+                        quoteLine1 = line.substr(0, quote1);
+                        quoteLine2 = line.substr(quote2+1);
+                        line = quoteLine1 + inquotes + quoteLine2;
+                    }
+                    quote2 = quote2+1;
+                } else if (quote2 == string::npos) {
+                    break;
+                } else if ((quote1+1) == quote2) {
+                    quote2 = quote1+2;
+                }
+            }
+        } while (quote1 != string::npos);
+
+        for (int j = 0; j < columns; j++) {
             end = line.find(',', start);
             if (end != string::npos) {
                 Cell[i][j].value = line.substr(start, (end - start));
@@ -176,7 +173,7 @@ void outputCSV(int& cells, int& rows, int& columns, string filename, Cells** Cel
             formattedCollege[i] = "Business";
         } else if (Cell[i][college].value.find("Education") != string::npos) {
             formattedCollege[i] = "Education";
-        } else if (Cell[i][college].value.find("Engineering") != string::npos) {
+        } else if (Cell[i][college].value.find("Engineering") != string::npos || Cell[i][major].value.find("Engineering") != string::npos) {
             formattedCollege[i] = "Engineering";
         } else if (Cell[i][college].value.find("Fine") != string::npos) {
             formattedCollege[i] = "Fine Arts";

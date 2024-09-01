@@ -19,7 +19,7 @@ int main() {
     cout << "\nThis program will take any \".csv\" reports created";
     cout << "\nusing AttendeeReportCreator.exe and combine them.";
     cout << "\nPlease note that this program will not work if any";
-    cout << "\nreports being merged are open while it is running.";      
+    cout << "\nreports used are already open in other programs.";
     cout << "\n*****************************************************\n";
 
     cout << "\nCreated by Benjamin Clark\n";
@@ -31,6 +31,21 @@ int main() {
             input.push_back("");
             getline(cin, input[total]);
 
+            for (int i = 0; i < total; i++) {
+                if (input[i] == input[total]) {
+                    duplicate = true;
+                    break;
+                } else {
+                    duplicate = false;
+                }
+            }
+
+            if (duplicate) {
+                input.pop_back();
+                cout << "\033[31m" << "\nThis file has already been entered.\n" << "\033[0m";
+                break;
+            }
+
             if (input[total] == "n" || input[total] == "N") {
                 if (input.size() > 2) {
                     break;
@@ -39,7 +54,7 @@ int main() {
                     cout << "\033[31m" << "\nYou must select at least two reports to merge.\n" << "\033[0m";
                 }
             } else if (input[total].size() > 11) {
-                if (input[total].substr(input[total].size()-11) == ".REPORT.csv") {
+                if (input[total].substr(input[total].size()-11) == ".REPORT.csv" || input[total].substr(input[total].size()-11) == ".MERGED.csv") {
                     File.push_back({});
                     File[total].file.open(input[total], ios::in);
 

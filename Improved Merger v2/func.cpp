@@ -59,21 +59,37 @@ void findCells(int& rows, int& columns, fstream& file) {
     Inputs: int, Files
     Purpose: Retrieve the value of each cell in the file and enter it into the structure array.
 */
-void getCells(int total, vector<Files> File) {
+void getCells(int total, vector<Files>& File) {
     //variables
     string line;
-    size_t quote1, quote2;
+    size_t start, end;
 
     //for each file, find the rows and columns using findCells, then retrieve the data from each cell
     for (int i = 0; i < total; i++) { //repeats for each file
         findCells(File[i].rows, File[i].columns, File[i].file);
-        for (int j = 0; j < File[i].rows; j++) {
-            getline(File[i].file, line);
-            for (int k = 0; k < File[i].columns; k++) {
-                
+        File[i].cell.resize(File[i].rows);
 
-                File[i].cell[j][k]
+        if (File[i].rows > 1) {
+            for (int j = 0; j < File[i].rows; j++) {
+                start = 0;
+                end = 0;
+                getline(File[i].file, line);
+                File[i].cell[j].resize(File[i].columns);
+
+                for (int k = 0; k < File[i].columns; k++) {
+                    end = line.find(',', start);
+
+                    if (end != string::npos) {
+                        File[i].cell[j][k] = line.substr(start, (end - start));
+                    } else {
+                        File[i].cell[j][k] = line.substr(start);
+                    }
+
+                    start = end+1;
+                }
             }
+        } else {
+            cout << "\033[31m" << "\nFile " << i+1 << " is empty. Skipping retrieval...\n" << "\033[0m";
         }
     }
 
@@ -85,19 +101,21 @@ void getCells(int total, vector<Files> File) {
     Inputs: int, Files
     Purpose: Retrieve the value of each cell and print it to the output file, accounting for duplicates.
 */
-void outputCSV(int total, Files File) {
+void outputCSV(int total, vector<Files>& File) {
     //variables
-    size_t start, pos, end;
     fstream outfile;
-    string outfilename, outfolder, fileContents = "", line, name, tempfileContents, repeats;
-    int last = 0, first = 1, college = 2, major = 3, year = 4;
+    vector<string> printqueue = {"Last Name,First Name,College,Major,Year,Attended\n"};
+    size_t inqueue = 0, pos, num;
+    bool found = false;
+    string outfilename, outfolder, tag;
+    int last = 0, first = 1, college = 2, major = 3, year = 4, attended;
 
     do {
         cout << "\nPlease enter the path of the output folder: ";
         getline(cin, outfolder);
         cout << "\nPlease enter the name of the output file (without .csv): ";
         getline(cin, outfilename);
-        outfilename = outfolder+"\\"+outfilename+".csv";
+        outfilename = outfolder+"\\"+outfilename+".MERGED.csv";
         cout << endl << outfilename << endl;
         cout << "\nCreating output file...\n";
         outfile.open(outfilename, ios::out);
@@ -116,65 +134,79 @@ void outputCSV(int total, Files File) {
     //
 
     cout << "\nPrinting to file...\n";
-    outfile << "Last Name,First Name,College,Major,Year,Attended\n";
     for (int i = 0; i < total; i++) {
-        for (int j = 0; j < File[i].columns; j++) {
-            if (File[i].cell[0][j] == "First Name") {
-                first = j;
-            } else if (File[i].cell[0][j] == "Last Name") {
-                last = j;
-            } else if (File[i].cell[0][j] == "College") {
-                college = j;
-            } else if (File[i].cell[0][j] == "Major") {
-                major = j;
-            } else if (File[i].cell[0][j] == "Year") {
-                year = j;
+        if (File[i].rows > 1) {
+            attended = -1;
+            for (int j = 0; j < File[i].columns; j++) {
+                if (File[i].cell[0][j] == "First Name") {
+                    first = j;
+                } else if (File[i].cell[0][j] == "Last Name") {
+                    last = j;
+                } else if (File[i].cell[0][j] == "College") {
+                    college = j;
+                } else if (File[i].cell[0][j] == "Major") {
+                    major = j;
+                } else if (File[i].cell[0][j] == "Year") {
+                    year = j;
+                } else if (File[i].cell[0][j] == "Attended") {
+                    attended = j;
+                }
             }
-        }
-        for (int j = 1; j < File[i].rows; j++) {
-            name = File[i].cell[j][last]+","+File[i].cell[j][first];
-            if (fileContents.find(name) == string::npos) { //if the name is not already in the file
-                repeats = "1";
-                outfile << File[i].cell[j][last] << ","
-                    << File[i].cell[j][first] << ","
-                    << File[i].cell[j][college] << ","
-                    << File[i].cell[j][major] << ","
-                    << File[i].cell[j][year] << ","
-                    << repeats << "\n";
-                    fileContents.append(name);
-            } else { //if the name is already in the file, increment that lines repeat count
-                outfile.close();
-                outfile.open(outfilename, ios::in);
 
-                while (getline(outfile, line)) {
-                    tempfileContents += line;
+            for (int j = 1; j < File[i].rows; j++) {
+                found = false;
+                tag = File[i].cell[j][last]+","+File[i].cell[j][first]+","+File[i].cell[j][college]+","+File[i].cell[j][major]+","+File[i].cell[j][year]+",";
+
+                if (attended != -1) { //handles merging .MERGED files
+                    for (int i = 1; i < printqueue.size(); i++) {
+                        if (printqueue[i].find(tag) != string::npos) {
+                            found = true;
+                            num = stoi(File[i].cell[j][attended]);
+                            tag = printqueue[i].substr(0, printqueue[i].find_last_of(",")+1);
+                            tag = tag + to_string(num) + "\n";
+                            printqueue[i] = tag;
+                            break;
+                        }
+                    }
+                } else { //handles merging duplicates
+                    for (int i = 1; i < printqueue.size(); i++) {
+                        if (printqueue[i].find(tag) != string::npos) {
+                            found = true;
+                            pos = (printqueue[i].find("\n") - printqueue[i].find_last_of(",")) - 1;
+                            tag = printqueue[i].substr(printqueue[i].find_last_of(",") + 1, pos);
+                            num = stoi(tag)+1;
+                            tag = printqueue[i].substr(0, printqueue[i].find_last_of(",")+1);
+                            tag = tag + to_string(num) + "\n";
+                            printqueue[i] = tag;
+                            break;
+                        }
+                    }
                 }
 
-                outfile.close();
-                outfile.open(outfilename, ios::out);
-
-                start = tempfileContents.find(name);
-                end = tempfileContents.find('\n', start);
-                pos = tempfileContents.rfind(',', end);
-                pos++;
-                line = tempfileContents.substr(pos, (end-pos));
-                cout << endl << line << endl << start << endl << end << endl << pos << endl << line << endl << tempfileContents << endl;
-                repeats = ""+(stoi(line)+1);
-
-                tempfileContents.replace((end-pos), line.length(), repeats);
-                outfile << repeats << "\n";
-
-                outfile.close();
-                outfile.open(outfilename, ios::out | ios::app);
+                if (!found && attended != -1) {
+                    tag = tag + File[i].cell[j][attended] + "\n";
+                    printqueue.push_back(tag);
+                    inqueue++;
+                } else if (!found) {
+                    tag = tag + "1\n";
+                    printqueue.push_back(tag);
+                    inqueue++;
+                }
             }
+        
+            last = 0, first = 1, college = 2, major = 3, year = 4;
         }
-        last = 0, first = 1, college = 2, major = 3, year = 4;
     }
+
+    for (int i = 0; i < printqueue.size(); i++) {
+        outfile << printqueue[i];
+    }
+
     cout << "\nPrinting complete. Output can be found at: " << outfilename << "\n";
 
     cout << "\nClosing file...\n";
     for (int i = 0; i < total; i++) {
-        (*(File[i].file)).close();
+        File[i].file.close();
     }
     outfile.close();
     return;
