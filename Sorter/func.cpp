@@ -78,9 +78,12 @@ int getCells(int& cells, int& rows, int& columns, fstream& file, Cells** Cell) {
                     inquotes = line.substr(quote1, (quote2-quote1)+1);
                     comma = inquotes.find(",");
                     if (comma != string::npos) {
-                        quoteLine1 = inquotes.substr(0, comma);
-                        quoteLine2 = inquotes.substr(comma+1);
-                        inquotes = quoteLine1 + " |" + quoteLine2;
+                        while (comma != string::npos) {
+                            quoteLine1 = inquotes.substr(0, comma);
+                            quoteLine2 = inquotes.substr(comma+1);
+                            inquotes = quoteLine1 + " |" + quoteLine2;
+                            comma = inquotes.find(",");
+                        }
                         quoteLine1 = line.substr(0, quote1);
                         quoteLine2 = line.substr(quote2+1);
                         line = quoteLine1 + inquotes + quoteLine2;
