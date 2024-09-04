@@ -31,6 +31,11 @@ int main() {
             input.push_back("");
             getline(cin, input[total]);
 
+            if (input[total][0] == '\"' && input[total].size() > 2) {
+                input[total] = input[total].substr(1);
+                input[total].pop_back();
+            }
+
             for (int i = 0; i < total; i++) {
                 if (input[i] == input[total]) {
                     duplicate = true;

@@ -113,6 +113,12 @@ void outputCSV(int total, vector<Files>& File) {
     do {
         cout << "\nPlease enter the path of the output folder: ";
         getline(cin, outfolder);
+
+        if (outfolder[0] == '\"' && outfolder.size() > 2) {
+            outfolder = outfolder.substr(1);
+            outfolder.pop_back();
+        }
+
         cout << "\nPlease enter the name of the output file (without .csv): ";
         getline(cin, outfilename);
         outfilename = outfolder+"\\"+outfilename+".MERGED.csv";
