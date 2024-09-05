@@ -5,8 +5,8 @@
 	Purpose: This program extracts data from a merged CSV file.
 */
 
-#ifndef MERGER_H
-#define MERGER_H
+#ifndef EXTRACTOR_H
+#define EXTRACTOR_H
 
 //libraries
 #include <iostream>
@@ -23,14 +23,18 @@ struct Files {
     int columns;
 	fstream file;
 	vector<vector<string>> cell;
+};
 
-	Files() : rows(0), columns(0), file(), cell() {}
+struct Degrees {
+	string college;
+	string name;
+	int count;
 };
 
 //function prototypes
 void delay(int);
 void findCells(int&, int&, fstream&);
-void getCells(Files);
-void outputCSV(Files);
+void getCells(Files&);
+void outputCSV(Files&);
 
 #endif

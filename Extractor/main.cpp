@@ -5,7 +5,7 @@
 	Purpose: This program extracts data from a merged CSV file. This is the main function file.
 */
 
-#include "merger.h"
+#include "extractor.h"
 
 int main() {
     //variables
@@ -14,8 +14,8 @@ int main() {
 
     //prints starting message to screen
     cout << "\n\n***********  ATTENDEE INFORMATION MERGER  ***********";
-    cout << "\nThis program will take any \".csv\" reports created";
-    cout << "\nusing AttendeeReportCreator.exe and combine them.";
+    cout << "\nThis program will extract info from \".csv\" reports created";
+    cout << "\nusing AttendeeReportCreator.exe or ReportMerger.exe.";
     cout << "\nPlease note that this program will not work if any";
     cout << "\nreports used are already open in other programs.";
     cout << "\n*****************************************************\n";
@@ -24,7 +24,7 @@ int main() {
 
     //asks the user for file paths and attempts to open them
     do {
-        cout << "\nPlease enter or paste the path of the merged report.\nThe path to the file can be found by shift+right-clicking the file and selecting \"Copy as Path\".\n\t>> ";
+        cout << "\nPlease enter or paste the path of the report.\nThe path to the file can be found by shift+right-clicking the file and selecting \"Copy as Path\".\n\t>> ";
         getline(cin, input);
 
         if (input[0] == '\"' && input.size() > 2) {
@@ -33,7 +33,7 @@ int main() {
         }
 
         if (input.size() > 11) {
-            if (input.substr(input[total].size()-11) == ".MERGED.csv") {
+            if (input.substr(input.size()-11) == ".MERGED.csv" || input.substr(input.size()-11) == ".REPORT.csv") {
                 File.file.open(input, ios::in);
 
                 if (File.file.is_open()) {
@@ -42,11 +42,9 @@ int main() {
                     cout << "\nFile could not be opened. Please try again.\n";
                 }
             } else {
-                input.pop_back();
                 cout << "\nThe name of this file does not end in \".REPORT.csv\". Ensure it is a properly formatted report,\nthen rename the file to end in \".REPORT.csv\"\n";
             }
         } else {
-            input.pop_back();
             cout << "\nThe name of this file is less than 11 characters long. Ensure it is a properly formatted report,\nand that the name ends in \".REPORT.csv\"\n";
         }
 
