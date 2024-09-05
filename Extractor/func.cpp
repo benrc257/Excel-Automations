@@ -102,12 +102,12 @@ void getCells(Files& File) {
 void outputCSV(Files& File) {
     //variables
     fstream outfile;
-    vector<string> printqueue = {""};
-    vector<Degrees> Degree;
+    vector<string> majors;
+    vector<Colleges> College;
     size_t inqueue = 0, pos, num;
-    bool found = false;
+    bool founddeg;
     string outfilename, outfolder;
-    int college = 2, major = 3, attended;
+    int college = 2, major = 3, attended, foundcol;
 
     do {
         cout << "\nPlease enter the path of the output folder: ";
@@ -153,16 +153,17 @@ void outputCSV(Files& File) {
         }
 
         for (int j = 1; j < File.rows; j++) {
-            found = false;
-
+            foundcol = 0;
+            founddeg = false;
             if (attended != -1) { //handles .MERGED files
-                for (int i = 0; i < Degree.size(); i++) {
-                    if (Degree[i].college == File.cell[i][college]) {
-                        found = true;
-                        num = stoi(File.cell[j][attended]);
-                        tag = printqueue[i].substr(0, printqueue[i].find_last_of(",")+1);
-                        tag = tag + to_string(num) + "\n";
-                        printqueue[i] = tag;
+                for (int i = 0; i < College.size(); i++) {
+                    if (College[i].name == File.cell[j][college]) {
+                        foundcol = true;
+                        foundcol = i;
+                        if ()
+                        for (int k = 0; k < College[i].degrees.size(); k++) {
+                            
+                        }
                         break;
                     }
                 }

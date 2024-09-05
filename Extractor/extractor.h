@@ -25,9 +25,9 @@ struct Files {
 	vector<vector<string>> cell;
 };
 
-struct Degrees {
-	string college;
+struct Colleges {
 	string name;
+	vector<string> degrees;
 	int count;
 };
 
