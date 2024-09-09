@@ -6,11 +6,7 @@
 */
 
 #ifndef EXTRACTOR_H
-<<<<<<< HEAD:Extractor/extractor.h
 #define EXTRACTOR_H
-=======
-#define MERGER_H
->>>>>>> b2c2792 (wip):Extractor/merger.h
 
 //libraries
 #include <iostream>
@@ -27,15 +23,15 @@ struct Files {
     int columns;
 	fstream file;
 	vector<vector<string>> cell;
-<<<<<<< HEAD:Extractor/extractor.h
 };
 
 struct Colleges {
 	string name;
 	vector<string> degrees;
+	vector<int> degreeCount;
+	vector<int> degreeAttendance;
 	int count;
-=======
->>>>>>> b2c2792 (wip):Extractor/merger.h
+	int totalAttendance;
 };
 
 //function prototypes

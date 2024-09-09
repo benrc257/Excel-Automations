@@ -105,9 +105,8 @@ void outputCSV(Files& File) {
     vector<string> majors;
     vector<Colleges> College;
     size_t inqueue = 0, pos, num;
-    bool founddeg;
     string outfilename, outfolder;
-    int college = 2, major = 3, attended, foundcol;
+    int college = 2, major = 3, attended, foundcol, founddeg;
 
     do {
         cout << "\nPlease enter the path of the output folder: ";
@@ -154,46 +153,45 @@ void outputCSV(Files& File) {
 
         for (int j = 1; j < File.rows; j++) {
             foundcol = 0;
-            founddeg = false;
-            if (attended != -1) { //handles .MERGED files
-                for (int i = 0; i < College.size(); i++) {
-                    if (College[i].name == File.cell[j][college]) {
-                        foundcol = true;
-                        foundcol = i;
-                        if ()
-                        for (int k = 0; k < College[i].degrees.size(); k++) {
-                            
+            founddeg = 0;
+
+            for (int i = 0; i < College.size(); i++) {
+                if (College[i].name == File.cell[j][college]) {
+                    foundcol = i;
+                    College[i].count++;
+                    if (attended != -1) {
+                        College[i].totalAttendance+=stoi(File.cell[j][attended]);
+                    } else {
+                        College[i].totalAttendance++;
+                    }
+                    for (int k = 0; k < College[i].degrees.size(); k++) {
+                        if (College[i].degrees[k] == File.cell[j][major]) {
+                            founddeg = k;
+                            College[i].degreeCount[k]++;
+                            if (attended != -1) {
+                                College[i].degreeAttendance[k]+=(stoi(File.cell[j][attended]));
+                            } else {
+                                College[i].degreeAttendance[k]++;
+                            }
+                            break;
                         }
-                        break;
                     }
-                }
-            } else { //handles .REPORT files
-                for (int i = 1; i < printqueue.size(); i++) {
-                    if (printqueue[i].find(tag) != string::npos) {
-                        found = true;
-                        pos = (printqueue[i].find("\n") - printqueue[i].find_last_of(",")) - 1;
-                        tag = printqueue[i].substr(printqueue[i].find_last_of(",") + 1, pos);
-                        num = stoi(tag)+1;
-                        tag = printqueue[i].substr(0, printqueue[i].find_last_of(",")+1);
-                        tag = tag + to_string(num) + "\n";
-                        printqueue[i] = tag;
-                        break;
-                    }
+                    break;
                 }
             }
 
-            if (!found && attended != -1) {
-                tag = tag + File.cell[j][attended] + "\n";
-                printqueue.push_back(tag);
-                inqueue++;
-            } else if (!found) {
-                tag = tag + "1\n";
-                printqueue.push_back(tag);
-                inqueue++;
+            if (foundcol == 0) {
+                College.push_back({});
+                College[0].name = File.cell[j][college];
+                College[0].count = 1;
+                if (attended != -1) {
+                    College[0].totalAttendance = stoi(File.cell[j][attended]);
+                } else {
+                    College[0].totalAttendance = 1;
+                }
             }
+            
         }
-    
-        last = 0, first = 1, college = 2, major = 3, year = 4;
     }
 
     for (int i = 0; i < printqueue.size(); i++) {
