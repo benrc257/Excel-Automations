@@ -179,7 +179,7 @@ void outputCSV(Files& File) {
                     break;
                 }
             }
-            cout << "\n1\n";
+            cout << "\n1\n"; //
             if (foundcol == 0) {
                 College.push_back({});
                 colleges = College.size()-1;
@@ -191,18 +191,22 @@ void outputCSV(Files& File) {
                     College[colleges].totalAttendance = 1;
                 }
             }
-            cout << "\n2\n";
+            cout << "\n2\n"; //
             if (founddeg == 0) {
-                College[foundcol].degrees.push_back({});
+                College[foundcol].degrees.push_back("");
+                College[foundcol].degreeCount.push_back(0);
+                College[foundcol].degreeAttendance.push_back(1);
+                cout << "\n3\n"; //
                 degrees = College[foundcol].degrees.size()-1;
+                cout << endl << degrees << endl; //
                 College[foundcol].degrees[degrees] = File.cell[j][major];
-                College[foundcol].degreeCount[degrees] = 1;
                 if (attended != -1) {
                     College[foundcol].degreeAttendance[degrees] = stoi(File.cell[j][attended]);
                 } else {
                     College[foundcol].degreeAttendance[degrees] = 1;
                 }
             }
+            cout << "\n4\n"; //
         }
     }
 
