@@ -179,10 +179,10 @@ void outputCSV(Files& File) {
                     break;
                 }
             }
-            
-            colleges = College.size()-1;
+            cout << "\n1\n";
             if (foundcol == 0) {
                 College.push_back({});
+                colleges = College.size()-1;
                 College[colleges].name = File.cell[j][college];
                 College[colleges].count = 1;
                 if (attended != -1) {
@@ -191,10 +191,10 @@ void outputCSV(Files& File) {
                     College[colleges].totalAttendance = 1;
                 }
             }
-            
-            degrees = College[foundcol].degrees.size()-1;
+            cout << "\n2\n";
             if (founddeg == 0) {
                 College[foundcol].degrees.push_back({});
+                degrees = College[foundcol].degrees.size()-1;
                 College[foundcol].degrees[degrees] = File.cell[j][major];
                 College[foundcol].degreeCount[degrees] = 1;
                 if (attended != -1) {
