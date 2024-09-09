@@ -1,7 +1,7 @@
 /*
 	Title: func.cpp
 	Author: Benjamin Clark
-	Date: 8/24/24
+	Date: 9/9/24
 	Purpose: This program extracts data from a merged CSV file. This file contains function definitions.
 */
 
@@ -56,8 +56,8 @@ void findCells(int& rows, int& columns, fstream& file) {
 
 /*
     Name: getCells()
-    Inputs: int, Files
-    Purpose: Retrieve the value of each cell in the file and enter it into the structure array.
+    Inputs: Files
+    Purpose: Retrieve the value of each cell in the file and enter it into the File vector.
 */
 void getCells(Files& File) {
     //variables
@@ -96,8 +96,8 @@ void getCells(Files& File) {
 
 /*
     Name: outputCSV()
-    Inputs: int, Files
-    Purpose: Retrieve the value of each cell and print it to the output file, accounting for duplicates.
+    Inputs: Files
+    Purpose: Organizes each degree and college then prints them to the output file.
 */
 void outputCSV(Files& File) {
     //variables
