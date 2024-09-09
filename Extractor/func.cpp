@@ -106,7 +106,7 @@ void outputCSV(Files& File) {
     vector<Colleges> College;
     size_t inqueue = 0, pos, num;
     string outfilename, outfolder;
-    int college = 2, major = 3, attended, foundcol, founddeg;
+    int college = 2, major = 3, attended, foundcol, founddeg, colleges, degrees;
 
     do {
         cout << "\nPlease enter the path of the output folder: ";
@@ -179,31 +179,53 @@ void outputCSV(Files& File) {
                     break;
                 }
             }
-
+            
+            colleges = College.size()-1;
             if (foundcol == 0) {
                 College.push_back({});
-                College[0].name = File.cell[j][college];
-                College[0].count = 1;
+                College[colleges].name = File.cell[j][college];
+                College[colleges].count = 1;
                 if (attended != -1) {
-                    College[0].totalAttendance = stoi(File.cell[j][attended]);
+                    College[colleges].totalAttendance = stoi(File.cell[j][attended]);
                 } else {
-                    College[0].totalAttendance = 1;
+                    College[colleges].totalAttendance = 1;
                 }
             }
             
+            degrees = College[foundcol].degrees.size()-1;
+            if (founddeg == 0) {
+                College[foundcol].degrees.push_back({});
+                College[foundcol].degrees[degrees] = File.cell[j][major];
+                College[foundcol].degreeCount[degrees] = 1;
+                if (attended != -1) {
+                    College[foundcol].degreeAttendance[degrees] = stoi(File.cell[j][attended]);
+                } else {
+                    College[foundcol].degreeAttendance[degrees] = 1;
+                }
+            }
         }
     }
 
-    for (int i = 0; i < printqueue.size(); i++) {
-        outfile << printqueue[i];
+    for (int i = 0; i < College.size(); i++) {
+        outfile << College[i].name
+                << ",Unique Attendance: " << to_string(College[i].count)
+                << ",Total Attendance: " << to_string(College[i].totalAttendance) << "\n"
+                << "------,-----------------,----------------\n"
+                << "Degree,Unique Attendance,Total Attendance\n";
+        
+        for (int j = 0; j < College[i].degrees.size(); j++) {
+            outfile << College[i].degrees[j] << ","
+                    << College[i].degreeCount[j] << ","
+                    << College[i].degreeAttendance[j] << "\n";
+        }
+
+        outfile << ",,\n,,\n";
     }
 
     cout << "\nPrinting complete. Output can be found at: " << outfilename << "\n";
 
     cout << "\nClosing file...\n";
-    for (int i = 0; i < total; i++) {
-        File.file.close();
-    }
+    File.file.close();
     outfile.close();
     return;
 }

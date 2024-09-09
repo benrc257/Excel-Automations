@@ -28,10 +28,10 @@ struct Files {
 struct Colleges {
 	string name;
 	vector<string> degrees;
-	vector<int> degreeCount;
-	vector<int> degreeAttendance;
-	int count;
-	int totalAttendance;
+	vector<int> degreeCount; //unique count
+	vector<int> degreeAttendance; //total
+	int count; //unique count
+	int totalAttendance; //total
 };
 
 //function prototypes
