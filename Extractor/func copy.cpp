@@ -102,12 +102,11 @@ void getCells(Files& File) {
 void outputCSV(Files& File) {
     //variables
     fstream outfile;
-    vector<string> majors, colleges;
-    vector<int> attendance;
+    vector<string> majors;
     vector<Colleges> College;
     size_t start, end, num;
     string outfilename, outfolder, line;
-    int college = 2, major = 3, attended;
+    int college = 2, major = 3, attended, foundcol, founddeg, colleges, degrees;
 
     do {
         cout << "\nPlease enter the path of the output folder: ";
@@ -152,8 +151,100 @@ void outputCSV(Files& File) {
             }
         }
 
-        for (int i = 0; i < File.rows; i++) {
-            
+        for (int j = 1; j < File.rows; j++) {
+            foundcol = 0;
+            founddeg = 0;
+
+            if (File.cell[j][college] != "") { //handles normal cases
+                for (int i = 0; i < College.size(); i++) {
+                    if (College[i].name == File.cell[j][college]) {
+                        foundcol = i;
+                        College[i].count++;
+                        if (attended != -1) {
+                            College[i].totalAttendance+=stoi(File.cell[j][attended]);
+                        } else {
+                            College[i].totalAttendance++;
+                        }
+
+                        end = 0;
+                        start = 0;
+                        num = 0;
+                        if (File.cell[j][major].find("|") != string::npos) {
+                            while (File.cell[j][major].find("|") != string::npos) {
+                                end = File.cell[j][major].find("|");
+                                line = File.cell[j][major].substr(start, end);
+                                majors.push_back("");
+                                majors[num] = line;
+                                num++;
+                                start = end+1;
+                            }
+                        } else {
+                            majors.push_back("");
+                            majors[0] = File.cell[j][major];
+                        }
+
+                        for (int l = 0; l < majors.size(); i++) {
+                            for (int k = 0; k < College[i].degrees.size(); k++) {
+                                if (College[i].degrees[k] == majors[l]) {
+                                    founddeg = k;
+                                    College[i].degreeCount[k]++;
+                                    if (attended != -1) {
+                                        College[i].degreeAttendance[k]+=(stoi(File.cell[j][attended]));
+                                    } else {
+                                        College[i].degreeAttendance[k]++;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        majors.resize(0);
+
+                        break;
+                    }
+                }
+            } else { //handles cases with missing colleges
+                for (int i = 0; i < College.size() && foundcol == 0; i++) {
+                    for (int k = 0; k < College[i].degrees.size(); k++) {
+                        if (College[i].degrees[k] == File.cell[j][major]) {
+                            foundcol = i;
+                            founddeg = k;
+                            College[i].count++;
+                            College[i].degreeCount[k]++;
+                            if (attended != -1) {
+                                College[i].totalAttendance+=stoi(File.cell[j][attended]);
+                                College[i].degreeAttendance[k]+=(stoi(File.cell[j][attended]));
+                            } else {
+                                College[i].totalAttendance++;
+                                College[i].degreeAttendance[k]++;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (foundcol == 0) {
+                College.push_back({});
+                colleges = College.size()-1;
+                College[colleges].name = File.cell[j][college];
+                College[colleges].count = 1;
+                if (attended != -1) {
+                    College[colleges].totalAttendance = stoi(File.cell[j][attended]);
+                } else {
+                    College[colleges].totalAttendance = 1;
+                }
+            }
+
+            if (founddeg == 0) {
+                College[foundcol].degrees.push_back("");
+                College[foundcol].degreeCount.push_back(1);
+                College[foundcol].degreeAttendance.push_back(1);
+                degrees = College[foundcol].degrees.size()-1;
+                College[foundcol].degrees[degrees] = File.cell[j][major];
+                if (attended != -1) {
+                    College[foundcol].degreeAttendance[degrees] = stoi(File.cell[j][attended]);
+                }
+            }
         }
     }
 
