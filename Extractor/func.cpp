@@ -186,8 +186,19 @@ void outputCSV(Files& File) {
                                 }
                             }
 
+                            if (College[i].degrees.size() == 0) {
+                                College[i].degrees.push_back(File.cell[i][major]);
+                                College[i].degreeCount.push_back(1);
+                                if (attended = -1) { //no attendance
+                                    College[i].degreeAttendance.push_back(1);
+                                } else { //attendance
+                                    College[i].degreeAttendance.push_back(stoi(File.cell[i][attended]));
+                                }
+                            }
+
                             break;
                         }
+
                         if (j == (College.size()-1)) { //if college not found and the last element is reached
                             College.push_back({});
                             College[i+1].name = File.cell[i][college];
@@ -197,6 +208,17 @@ void outputCSV(Files& File) {
                             } else { //attendance
                                 College[i+1].totalAttendance+=stoi(File.cell[i][attended]);
                             }
+                        }
+                    }
+
+                    if (College.size() == 0) {
+                        College.push_back({});
+                        College[0].name = File.cell[i][college];
+                        College[0].count++;
+                        if (attended = -1) { //no attendance
+                            College[i+1].totalAttendance++;
+                        } else { //attendance
+                            College[i+1].totalAttendance+=stoi(File.cell[i][attended]);
                         }
                     }
 
@@ -282,9 +304,6 @@ void outputCSV(Files& File) {
             }
         }
     }
-
-    College.push_back({});
-    College[College.size()-1].name = "Unsorted";
 
     for (int i = 0; i < unsorted.size(); i++) {
         for (int j = 0; j < College.size(); j++) {
