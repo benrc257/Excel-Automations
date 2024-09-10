@@ -155,17 +155,36 @@ void outputCSV(Files& File) {
             foundcol = 0;
             founddeg = 0;
 
-            for (int i = 0; i < College.size(); i++) {
-                if (College[i].name == File.cell[j][college]) {
-                    foundcol = i;
-                    College[i].count++;
-                    if (attended != -1) {
-                        College[i].totalAttendance+=stoi(File.cell[j][attended]);
-                    } else {
-                        College[i].totalAttendance++;
+            if (File.cell[j][college] != "") { //handles normal cases
+                for (int i = 0; i < College.size(); i++) {
+                    if (College[i].name == File.cell[j][college]) {
+                        foundcol = i;
+                        College[i].count++;
+                        if (attended != -1) {
+                            College[i].totalAttendance+=stoi(File.cell[j][attended]);
+                        } else {
+                            College[i].totalAttendance++;
+                        }
+                        for (int k = 0; k < College[i].degrees.size(); k++) {
+                            if (College[i].degrees[k] == File.cell[j][major]) {
+                                founddeg = k;
+                                College[i].degreeCount[k]++;
+                                if (attended != -1) {
+                                    College[i].degreeAttendance[k]+=(stoi(File.cell[j][attended]));
+                                } else {
+                                    College[i].degreeAttendance[k]++;
+                                }
+                                break;
+                            }
+                        }
+                        break;
                     }
+                }
+            } else { //handles cases with missing colleges
+                for (int i = 0; i < College.size(); i++) {
                     for (int k = 0; k < College[i].degrees.size(); k++) {
                         if (College[i].degrees[k] == File.cell[j][major]) {
+                            foundcol = i;
                             founddeg = k;
                             College[i].degreeCount[k]++;
                             if (attended != -1) {
@@ -176,9 +195,9 @@ void outputCSV(Files& File) {
                             break;
                         }
                     }
-                    break;
                 }
             }
+
             cout << "\n1\n"; //
             if (foundcol == 0) {
                 College.push_back({});
