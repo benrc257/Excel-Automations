@@ -102,7 +102,7 @@ void getCells(Files& File) {
 void outputCSV(Files& File) {
     //variables
     fstream outfile;
-    vector<string> majors, colleges;
+    vector<string> majors, unsorted;
     vector<int> attendance;
     vector<Colleges> College;
     size_t start, end, num;
@@ -142,18 +142,115 @@ void outputCSV(Files& File) {
 
     if (File.rows > 1) {
         attended = -1;
-        for (int j = 0; j < File.columns; j++) {
-            if (File.cell[0][j] == "College") {
-                college = j;
-            } else if (File.cell[0][j] == "Major") {
-                major = j;
-            } else if (File.cell[0][j] == "Attended") {
-                attended = j;
+        for (int i = 0; i < File.columns; i++) {
+            if (File.cell[0][i] == "College") {
+                college = i;
+            } else if (File.cell[0][i] == "Major") {
+                major = i;
+            } else if (File.cell[0][i] == "Attended") {
+                attended = i;
             }
         }
 
-        for (int i = 0; i < File.rows; i++) {
-            
+        for (int i = 1; i < File.rows; i++) {
+            if (File.cell[i][college] != "") { //if the college is in the data
+                if (File.cell[i][major].find("|") == string::npos) { //if there is only one degree
+                    for (int j = 0; j < College.size(); j++) { //search through each college
+                        if (College[i].name == File.cell[i][college]) { //when college matches
+                            College[i].count++; //unique attendance
+                            if (attended == -1) { //if there isn't an attendance count
+                                College[i].totalAttendance++;
+                            } else { //if there is
+                                College[i].totalAttendance+=stoi(File.cell[i][attended]);
+                            }
+
+                            for (int k = 0; k < College[i].degrees.size(); k++) { //searches through each degree
+                                if (College[i].degrees[k] == File.cell[i][major]) { //if degrees match
+                                    College[i].degreeCount[k]++; //unique attendance
+                                    if (attended == -1) { //if there isn't an attendance count
+                                        College[i].degreeAttendance[k]++;
+                                    } else { //if there is
+                                        College[i].degreeAttendance[k]+=stoi(File.cell[i][attended]);
+                                    }
+
+                                    break;
+                                }
+                                if (k == (College[i].degrees.size()-1)) { //if degree not found and on last element
+                                    College[i].degrees.push_back(File.cell[i][major]);
+                                    College[i].degreeCount.push_back(1);
+                                    if (attended = -1) { //no attendance
+                                        College[i].degreeAttendance.push_back(1);
+                                    } else { //attendance
+                                        College[i].degreeAttendance.push_back(stoi(File.cell[i][attended]));
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                        if (j == (College.size()-1)) { //if college not found and the last element is reached
+                            College.push_back({});
+                            College[i+1].name = File.cell[i][college];
+                            College[i+1].count++;
+                            if (attended = -1) { //no attendance
+                                College[i+1].totalAttendance++;
+                            } else { //attendance
+                                College[i+1].totalAttendance+=stoi(File.cell[i][attended]);
+                            }
+                        }
+                    }
+
+                } else { //if there are multiple degrees
+                    for (int j = 0; j < College.size(); j++) { //search through each college
+                        if (College[i].name == File.cell[i][college]) { //when college matches
+                            College[i].count++; //unique attendance
+                            if (attended == -1) { //if there isn't an attendance count
+                                College[i].totalAttendance++;
+                            } else { //if there is
+                                College[i].totalAttendance+=stoi(File.cell[i][attended]);
+                            }
+
+                            //majors with | breakdown here
+
+                            for (int k = 0; k < College[i].degrees.size(); k++) { //searches through each degree
+                                if (College[i].degrees[k] == File.cell[i][major]) { //if degrees match
+                                    College[i].degreeCount[k]++; //unique attendance
+                                    if (attended == -1) { //if there isn't an attendance count
+                                        College[i].degreeAttendance[k]++;
+                                    } else { //if there is
+                                        College[i].degreeAttendance[k]+=stoi(File.cell[i][attended]);
+                                    }
+
+                                    break;
+                                }
+                                if (k == (College[i].degrees.size()-1)) { //if degree not found and on last element
+                                    College[i].degrees.push_back(File.cell[i][major]);
+                                    College[i].degreeCount.push_back(1);
+                                    if (attended = -1) { //no attendance
+                                        College[i].degreeAttendance.push_back(1);
+                                    } else { //attendance
+                                        College[i].degreeAttendance.push_back(stoi(File.cell[i][attended]));
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                        if (j == (College.size()-1)) { //if college not found and the last element is reached
+                            College.push_back({});
+                            College[i+1].name = File.cell[i][college];
+                            College[i+1].count++;
+                            if (attended = -1) { //no attendance
+                                College[i+1].totalAttendance++;
+                            } else { //attendance
+                                College[i+1].totalAttendance+=stoi(File.cell[i][attended]);
+                            }
+                        }
+                    }
+                }
+            } else { //if the college is missing
+
+            }
         }
     }
 
