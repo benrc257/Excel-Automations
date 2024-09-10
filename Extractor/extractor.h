@@ -30,8 +30,8 @@ struct Colleges {
 	vector<string> degrees;
 	vector<int> degreeCount; //unique count
 	vector<int> degreeAttendance; //total
-	int count; //unique count
-	int totalAttendance; //total
+	int count = 0; //unique count
+	int totalAttendance = 0; //total
 };
 
 //function prototypes
