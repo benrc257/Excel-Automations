@@ -153,48 +153,54 @@ void outputCSV(Files& File) {
         }
 
         for (int i = 1; i < File.rows; i++) {
+
+            if (File.cell[i][major] == "" || File.cell[i][major] == "\"\"") {
+                File.cell[i][major] = "Unlisted Degree";
+            }
+
             if (File.cell[i][college] != "" && File.cell[i][college] != "Other or Unlisted") { //if the college is in the data
                 cout << "\n1\n";
                 if (File.cell[i][major].find("|") == string::npos) { //if there is only one degree
                     for (int j = 0; j < College.size(); j++) { //search through each college
-                        if (College[i].name == File.cell[i][college]) { //when college matches
-                            College[i].count++; //unique attendance
+                        if (College[j].name == File.cell[i][college]) { //when college matches
+                            College[j].count++; //unique attendance
                             if (attended == -1) { //if there isn't an attendance count
-                                College[i].totalAttendance++;
+                                College[j].totalAttendance++;
                             } else { //if there is
-                                College[i].totalAttendance+=stoi(File.cell[i][attended]);
+                                College[j].totalAttendance+=stoi(File.cell[i][attended]);
                             }
                             cout << "\n2\n";
-                            for (int k = 0; k < College[i].degrees.size(); k++) { //searches through each degree
-                                if (College[i].degrees[k] == File.cell[i][major]) { //if degrees match
-                                    College[i].degreeCount[k]++; //unique attendance
+                            
+                            for (int k = 0; k < College[j].degrees.size(); k++) { //searches through each degree
+                                if (College[j].degrees[k] == File.cell[i][major]) { //if degrees match
+                                    College[j].degreeCount[k]++; //unique attendance
                                     if (attended == -1) { //if there isn't an attendance count
-                                        College[i].degreeAttendance[k]++;
+                                        College[j].degreeAttendance[k]++;
                                     } else { //if there is
-                                        College[i].degreeAttendance[k]+=stoi(File.cell[i][attended]);
+                                        College[j].degreeAttendance[k]+=stoi(File.cell[i][attended]);
                                     }
-
+                                    cout << "\ndegrees match\n";
                                     break;
                                 }
                                 cout << "\n3\n";
-                                if (k == (College[i].degrees.size()-1)) { //if degree not found and on last element
-                                    College[i].degrees.push_back(File.cell[i][major]);
-                                    College[i].degreeCount.push_back(1);
-                                    if (attended = -1) { //no attendance
-                                        College[i].degreeAttendance.push_back(1);
+                                if (k == (College[j].degrees.size()-1)) { //if degree not found and on last element
+                                    College[j].degrees.push_back(File.cell[i][major]);
+                                    College[j].degreeCount.push_back(1);
+                                    if (attended == -1) { //no attendance
+                                        College[j].degreeAttendance.push_back(1);
                                     } else { //attendance
-                                        College[i].degreeAttendance.push_back(stoi(File.cell[i][attended]));
+                                        College[j].degreeAttendance.push_back(stoi(File.cell[i][attended]));
                                     }
                                 }
                             }
                             cout << "\n3\n";
-                            if (College[i].degrees.size() == 0) {
-                                College[i].degrees.push_back(File.cell[i][major]);
-                                College[i].degreeCount.push_back(1);
-                                if (attended = -1) { //no attendance
-                                    College[i].degreeAttendance.push_back(1);
+                            if (College[j].degrees.size() == 0) {
+                                College[j].degrees.push_back(File.cell[i][major]);
+                                College[j].degreeCount.push_back(1);
+                                if (attended == -1) { //no attendance
+                                    College[j].degreeAttendance.push_back(1);
                                 } else { //attendance
-                                    College[i].degreeAttendance.push_back(stoi(File.cell[i][attended]));
+                                    College[j].degreeAttendance.push_back(stoi(File.cell[i][attended]));
                                 }
                                 cout << "\n4\n";
                             }
@@ -204,12 +210,12 @@ void outputCSV(Files& File) {
 
                         if (j == (College.size()-1)) { //if college not found and the last element is reached
                             College.push_back({});
-                            College[j+1].name = File.cell[i][college];
-                            College[j+1].count++;
-                            if (attended = -1) { //no attendance
-                                College[j+1].totalAttendance++;
+                            College.back().name = File.cell[i][college];
+                            College.back().count++;
+                            if (attended == -1) { //no attendance
+                                College.back().totalAttendance++;
                             } else { //attendance
-                                College[j+1].totalAttendance+=stoi(File.cell[i][attended]);
+                                College.back().totalAttendance+=stoi(File.cell[i][attended]);
                             }
                             cout << "\n5\n";
                         }
@@ -219,7 +225,7 @@ void outputCSV(Files& File) {
                         College.push_back({});
                         College[0].name = File.cell[i][college];
                         College[0].count++;
-                        if (attended = -1) { //no attendance
+                        if (attended == -1) { //no attendance
                             College[0].totalAttendance++;
                         } else { //attendance
                             College[0].totalAttendance+=stoi(File.cell[i][attended]);
@@ -230,17 +236,22 @@ void outputCSV(Files& File) {
                 } else { //if there are multiple degrees
                     cout << "\n7\n";
                     for (int j = 0; j < College.size(); j++) { //search through each college
-                        if (College[i].name == File.cell[i][college]) { //when college matches
-                            College[i].count++; //unique attendance
+                        if (College[j].name == File.cell[i][college]) { //when college matches
+                            College[j].count++; //unique attendance
                             if (attended == -1) { //if there isn't an attendance count
-                                College[i].totalAttendance++;
+                                College[j].totalAttendance++;
                             } else { //if there is
-                                College[i].totalAttendance+=stoi(File.cell[i][attended]);
+                                College[j].totalAttendance+=stoi(File.cell[i][attended]);
                             }
 
                             start = 0;
                             end = 0;
-                            line = File.cell[i][major].find("|");
+                            line = File.cell[i][major];
+
+                            while (line.find("\"") != string::npos) {
+                                line = line.substr((line.find("\"")), (line.find_last_of("\"")));
+                            }
+
                             do {
                                 end = line.find("|");
                                 majors.push_back(line.substr(start, end));
@@ -250,24 +261,24 @@ void outputCSV(Files& File) {
                             majors.push_back(line);
 
                             for (int l = 0; l < majors.size(); l++) {
-                                for (int k = 0; k < College[i].degrees.size(); k++) { //searches through each degree
-                                    if (College[i].degrees[k] == majors[l]) { //if degrees match
-                                        College[i].degreeCount[k]++; //unique attendance
+                                for (int k = 0; k < College[j].degrees.size(); k++) { //searches through each degree
+                                    if (College[j].degrees[k] == majors[l]) { //if degrees match
+                                        College[j].degreeCount[k]++; //unique attendance
                                         if (attended == -1) { //if there isn't an attendance count
-                                            College[i].degreeAttendance[k]++;
+                                            College[j].degreeAttendance[k]++;
                                         } else { //if there is
-                                            College[i].degreeAttendance[k]+=stoi(File.cell[i][attended]);
+                                            College[j].degreeAttendance[k]+=stoi(File.cell[i][attended]);
                                         }
 
                                         break;
                                     }
-                                    if (k == (College[i].degrees.size()-1)) { //if degree not found and on last element
-                                        College[i].degrees.push_back(majors[l]);
-                                        College[i].degreeCount.push_back(1);
-                                        if (attended = -1) { //no attendance
-                                            College[i].degreeAttendance.push_back(1);
+                                    if (k == (College[j].degrees.size()-1)) { //if degree not found and on last element
+                                        College[j].degrees.push_back(majors[l]);
+                                        College[j].degreeCount.push_back(1);
+                                        if (attended == -1) { //no attendance
+                                            College[j].degreeAttendance.push_back(1);
                                         } else { //attendance
-                                            College[i].degreeAttendance.push_back(stoi(File.cell[i][attended]));
+                                            College[j].degreeAttendance.push_back(stoi(File.cell[i][attended]));
                                         }
                                     }
                                 }
@@ -277,12 +288,12 @@ void outputCSV(Files& File) {
                         }
                         if (j == (College.size()-1)) { //if college not found and the last element is reached
                             College.push_back({});
-                            College[j+1].name = File.cell[i][college];
-                            College[j+1].count++;
-                            if (attended = -1) { //no attendance
-                                College[j+1].totalAttendance++;
+                            College.back().name = File.cell[i][college];
+                            College.back().count++;
+                            if (attended == -1) { //no attendance
+                                College.back().totalAttendance++;
                             } else { //attendance
-                                College[j+1].totalAttendance+=stoi(File.cell[i][attended]);
+                                College.back().totalAttendance+=stoi(File.cell[i][attended]);
                             }
                         }
                     }
@@ -310,24 +321,40 @@ void outputCSV(Files& File) {
             }
         }
     }
+    cout << "\n8\n";
+
+    /*
+    College.push_back({});
+    College.back().name = "Unsorted";
 
     for (int i = 0; i < unsorted.size(); i++) {
         for (int j = 0; j < College.size(); j++) {
-            for (int k = 0; College[i].degrees.size(); k++) {
+            for (int k = 0; k < College[j].degrees.size(); k++) {
                 if (College[j].degrees[k] == unsorted[i]) {
                     College[j].count++;
                     College[j].degreeCount[k]++;
                     College[j].degreeAttendance[k]+=attendance[i];
                     j = College.size();
+                    cout << "\n10\n";
                     break;
                 }
-                if (j == (College.size()-1) && k == (College[i].degrees.size()-1)) {
+                cout << "\n13\n";
+                if (j == (College.size()-1) && k == (College[j].degrees.size()-1)) {
                     College[j].degrees.push_back(unsorted[i]);
                     College[j].degreeAttendance.push_back(attendance[i]);
+                    cout << "\n11\n";
                 }
+            }
+            if (College[j].degrees.size() == 0) {
+                College[j].degrees.push_back(unsorted[i]);
+                College[j].degreeAttendance.push_back(attendance[i]);
+                College[j].degreeCount.push_back(1);
+                cout << "\n12\n";
             }
         }
     }
+    cout << "\n9\n";
+    */
 
     for (int i = 0; i < College.size(); i++) {
         outfile << College[i].name
