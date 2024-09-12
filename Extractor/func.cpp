@@ -108,6 +108,7 @@ void outputCSV(Files& File) {
     size_t start, end;
     string outfilename, outfolder, line;
     int college = 2, major = 3, attended;
+    bool found = false;
 
     do {
         cout << "\nPlease enter the path of the output folder: ";
@@ -168,7 +169,8 @@ void outputCSV(Files& File) {
                 while (line.find("|") != string::npos) { //breaks down cell by pipe
 
                     end = line.find("|");
-                    majors.push_back(line.substr(start, end-1));
+                    line = line.substr(start, end-1);
+                    majors.push_back(line);
                     start = end+2;
 
                 }
@@ -219,6 +221,7 @@ void outputCSV(Files& File) {
                                             } else { //if attendance is missing
                                                 College[j].degreeAttendance.push_back(1);
                                             }
+                                            break;
 
                                         }
 
@@ -269,6 +272,7 @@ void outputCSV(Files& File) {
                                 }
 
                             }
+                            break;
 
                         }
                     }
@@ -321,14 +325,38 @@ void outputCSV(Files& File) {
     }
 
     //handling unsorted degrees
+    College.push_back({});
+    College.back().name = "Unsorted";
+
     for (int i = 0; i < unsorted.size(); i++) {
 
         for (int j = 0; j < College.size(); j++) {
 
+            found = false;
+
             for (int k = 0; k < College[j].degrees.size(); k++) {
             
-                if ()
+                if (unsorted[i] == College[j].degrees[k]) {
+                    
+                    College[j].degreeCount[k]++;
+                    College[j].degreeAttendance[k]+=attendance[i];
 
+                    found = true;
+                    break;
+
+                } else if (j == College.size()-1 && k == College[j].degrees.size()-1) {
+                    
+                    College.back().degrees.push_back(unsorted[i]);
+                    College.back().degreeCount.push_back(1);
+                    College.back().degreeAttendance.push_back(attendance[i]);
+                    break;
+
+                }
+
+            }
+
+            if (found) {
+                break;
             }
 
         }
