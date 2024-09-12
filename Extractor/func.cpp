@@ -155,7 +155,15 @@ void outputCSV(Files& File) {
 
         for (int i = 1; i < File.rows; i++) {
 
+            //handles empty majors
+            if (File.cell[i][major] == "" || File.cell[i][major] == "\"\"") {
+                File.cell[i][major] = "Unlisted";
+            }
+
             //handling multiple majors in one cell
+            majors.resize(0);
+            attendance.resize(0);
+            unsorted.resize(0);
             start = 0;
             end = 0;
             line = File.cell[i][major];
@@ -176,7 +184,7 @@ void outputCSV(Files& File) {
                 }
 
             } else { //if no pipe
-                majors.push_back(File.cell[i][major]);
+                majors.push_back(line);
             }
 
             if (File.cell[i][college] != "" && File.cell[i][college] != "Other or Unlisted") { //if college cell is not empty
@@ -192,7 +200,7 @@ void outputCSV(Files& File) {
                             } else { //if attendance is missing
                                 College[j].totalAttendance++;
                             }
-
+                            
                             if (College[j].degrees.size() != 0) { //if degree is not empty vector
 
                                 for (int l = 0; l < majors.size(); l++) {
@@ -211,7 +219,7 @@ void outputCSV(Files& File) {
 
                                             break;
 
-                                        } else if (k == College.size()-1) { //if degree is missing
+                                        } else if (k == College[j].degrees.size()-1) { //if degree is missing
 
                                             College[j].degrees.push_back(majors[l]);
                                             College[j].degreeCount.push_back(1);
@@ -296,10 +304,8 @@ void outputCSV(Files& File) {
 
                         if (attended != -1) { //if attendance is present
                             College.back().degreeAttendance.push_back(stoi(File.cell[i][attended]));
-                            College.back().totalAttendance+=stoi(File.cell[i][attended]);
                         } else { //if attendance is missing
                             College.back().degreeAttendance.push_back(1);
-                            College.back().totalAttendance++;
                         }
 
                     }
@@ -355,6 +361,13 @@ void outputCSV(Files& File) {
 
             }
 
+            if (j == College.size()-1 && College.back().degrees.size() == 0) {
+                College.back().degrees.push_back(unsorted[i]);
+                College.back().degreeCount.push_back(1);
+                College.back().degreeAttendance.push_back(attendance[i]);  
+                break;
+            }
+
             if (found) {
                 break;
             }
@@ -376,7 +389,7 @@ void outputCSV(Files& File) {
                     << College[i].degreeAttendance[j] << "\n";
         }
 
-        outfile << ",,\n,,\n";
+        outfile << "\n\n";
     }
 
     cout << "\nPrinting complete. Output can be found at: " << outfilename << "\n";
