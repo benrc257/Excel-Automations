@@ -160,7 +160,7 @@ void outputCSV(Files& File) {
                 File.cell[i][major] = "Unlisted";
             }
 
-            //handling multiple majors in one cell
+            //handling multiple majors in one cell and resizes vectors
             majors.resize(0);
             attendance.resize(0);
             unsorted.resize(0);
