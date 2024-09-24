@@ -412,11 +412,12 @@ void outputCSV(Files& File) {
     }
 
     for (int i = 0; i < College.size(); i++) {
-        outfile << College[i].name
+        outfile << "College:,"
                 << ",Unique Attendance:,"
                 << ",Total Attendance:," << "\n"
-                << "―――――," << to_string(College[i].count)
-                << "," << to_string(College[i].totalAttendance) << "\n"
+                << College[i].name << ","
+                << to_string(College[i].count) << ","
+                << to_string(College[i].totalAttendance) << "\n"
                 << "Degree,Unique Attendance,Total Attendance\n";
         
         for (int j = 0; j < College[i].degrees.size(); j++) {
@@ -426,6 +427,19 @@ void outputCSV(Files& File) {
         }
 
         outfile << "\n\n";
+    }
+
+    outfile << "Unique Attendance by College:"<< "\n";
+    for (int i = 0; i < College.size(); i++) {
+        outfile << College[i].name << ","
+                << College[i].count << "\n";
+    }
+    outfile << "\n\n";
+
+    outfile << "Total Attendance by College:"<< "\n";
+    for (int i = 0; i < College.size(); i++) {
+        outfile << College[i].name << ","
+                << College[i].totalAttendance << "\n";
     }
 
     cout << "\nPrinting complete. Output can be found at: " << outfilename << "\n";
