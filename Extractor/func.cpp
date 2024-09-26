@@ -379,6 +379,8 @@ void outputCSV(Files& File) {
                     
                     College[j].degreeCount[k]++;
                     College[j].degreeAttendance[k]+=attendance[i];
+                    College[j].totalAttendance+=attendance[i];
+                    College[j].count++;
 
                     found = true;
                     break;
@@ -412,7 +414,7 @@ void outputCSV(Files& File) {
     }
 
     for (int i = 0; i < College.size(); i++) {
-        outfile << "College:,"
+        outfile << "College:"
                 << ",Unique Attendance:,"
                 << ",Total Attendance:," << "\n"
                 << College[i].name << ","
