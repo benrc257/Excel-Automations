@@ -414,13 +414,13 @@ void outputCSV(Files& File) {
     }
 
     for (int i = 0; i < College.size(); i++) {
-        outfile << "College:"
-                << ",Unique Attendance:,"
-                << ",Total Attendance:," << "\n"
+        outfile << "College:,"
+                << "Unique Attendance:,"
+                << "Total Attendance:" << "\n"
                 << College[i].name << ","
                 << to_string(College[i].count) << ","
-                << to_string(College[i].totalAttendance) << "\n"
-                << "Degree,Unique Attendance,Total Attendance\n";
+                << to_string(College[i].totalAttendance) << "\n\n"
+                << "Degree:,Unique:,Total:\n";
         
         for (int j = 0; j < College[i].degrees.size(); j++) {
             outfile << College[i].degrees[j] << ","
@@ -428,7 +428,7 @@ void outputCSV(Files& File) {
                     << College[i].degreeAttendance[j] << "\n";
         }
 
-        outfile << "\n\n";
+        outfile << "\n\n\n";
     }
 
     outfile << "Unique Attendance by College:"<< "\n";
